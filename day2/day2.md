@@ -204,3 +204,179 @@ var sendMessage = function(_mess){
 - 服务端接受到客户端的消息触发 message 方法，然后将该消息广播给所有在线的用户
 - 所有客户端收到来自服务端广播的消息，然后将该消息显示在聊天列表。
 - 聊天和退出聊天都是重复着客户端发送消息，服务端接受消息然后向客户端广播消息，客户端显示广播消息。
+
+
+# 什么是webpack
+
+- [官方文档](https://www.webpackjs.com/)
+- [npm文档](https://www.npmjs.com/package/webpack)
+
+三阶段第一个重点，项目必要项
+
+webpack 是一个模块打包器。webpack 的主要目标是将 JavaScript 文件打包在一起,打包后的文件用于在浏览器中使用
+
+- 原生模块 http fs stream assert cypto path
+- 第三方模块 jquery(jsdom) express mysql mongodb vue react request
+- 自定义模块 db.js token.js
+
+异步，面向对象，函数式编程，模块化(组件化)
+
+因为工作我们开发的功能其实很复杂，那我们不可能用一份全部写完，也需要分工合作，也方便维护和开发，所以我们会利用很多模块来去拼凑一个项目
+
+```js
+webpack = gulp + requirejs
+```
+
+<img src="3.png"/>
+
+
+从上图看，左边的模块经过webpack变少了（多变少，类型，还有大小，数量都变少）
+
+可以不直接写html,css,js，写其他预编译语言，jade,less,typescript，都可以通过webpack转化为浏览器识别代码，webpack可能会帮你预编译前端不能识别的语言，把它转化为浏览器能识别的语言
+
+# 安装
+
+webpack是一个第三方模块
+
+写gulp的时候，新建一份`gulpfile.js`配置文件
+
+同样道理webpack也需要一份配置文件，`webpack.config.js`，下面是webpack最基础的配置代码
+
+从npm模块中心下载该模块，一定要安装，就像gulp全局安装一样，webpack全局安装完之后会诞生全局命令webpack
+```bash
+npm install webpack -g --save
+```
+
+```js
+const path = require('path');
+module.exports = {
+  entry: './src/index.js',
+  output: {
+      path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
+  }
+};
+```
+
+如果安装成功的话，你将会看到以下
+
+<img src="4.png">
+
+两种启动方式，全局安装命令里面输入webpack
+
+局部安装./node_modules/webpack/bin/webpack
+
+```
+node webpack
+```
+
+<img src="5.png">
+
+如果你安装的是4.0版本以上的话，需要额外装
+
+4.0之前是webpack webpack-cli在同一个包里面，4.0被完全分离开来，需要额外安装
+```
+npm install --save-dev webpack-cli 
+```
+
+# 入口 entry
+
+入口文件，把这一份`./src/index.js`文件引入到webpack，经过webpack处理
+```js
+// 原生模块，处理路径
+const path = require('path');
+// 导出模块
+module.exports = {
+    // 模式 开发者和生产模式
+    // mode: 'development',
+    // 开发前用development，发布用production
+    mode: 'production',
+    // 入口
+    entry: './src/index.js',
+    // 出口
+    output: {
+        // 被绑好的bundle.js，定义输出的文件名为bundle.js
+        filename: 'bundle.js',
+        // 指定输出的路径
+        path: path.resolve(__dirname, 'dist')
+    }
+};
+```
+
+# 出口 output
+
+经过处理后的文件，从ouput的指定路径写下来
+
+# 运行
+
+把你的命令定位到webpack.config.js的目录下
+```
+webpack
+```
+<img src="6.png">
+
+# 模块化改变
+
+跟node的模块概念是一样
+
+```html
+<script src="jquery"></script>
+<script src="index"></script>
+```
+它一切的引入都受JS控制，并且跟node模块化概念是不谋而合的
+```js
+var $ = require('jquery');
+var index = require('./index.js');
+```
+你可以新建一份index.html，把bundle.js引入，在浏览器里面执行
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="bundle.js"></script>
+</body>
+</html>
+```
+
+由于webpack是帮你把这个模块打包成JS，用于客户端的，node的原生模块一般不要打包进去
+
+webpack一般是不支持原生模块的
+```js
+const $ = require('jquery')
+const fs = require('fs')
+console.log(fs)
+console.log(1)
+$('body').html('hello world')
+```
+
+
+# loader
+
+loader 让 webpack 能够去处理那些非 JavaScript 文件（webpack 自身只理解 JavaScript）。loader 可以将所有类型的文件转换为 webpack 能够处理的有效模块，然后你就可以利用 webpack 的打包能力，对它们进行处理。
+
+本质上，webpack loader 将所有类型的文件，转换为应用程序的依赖图（和最终的 bundle）可以直接引用的模块。
+
+
+非JS模块
+
+css，png，jpg，MP4，txt，html都叫非JS模块，都需要loader加载器处理
+
+[官方加载器文档](https://www.webpackjs.com/loaders/)
+
+# plugins
+
+跟gulp的插件是很相似的
+
+可以吧代码做重名压缩
+
+压缩代码的插件
+```js
+npm i -D uglifyjs-webpack-plugin
+```
+一般只会压缩src里面的文件，node_modules的文件将不会被处理
