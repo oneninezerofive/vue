@@ -184,3 +184,116 @@ new Vue({
 })
 </script>
 ```
+
+
+# 指令
+
+
+指令 (Directives) 是带有 `v-` 前缀的特殊特性。
+
+- 内置指令(vue本身自带)
+- 自定义指令(我们为vue写的，一般来说很少自己写)
+
+下图这些就是vue的内置指令
+
+<img src="3.png"/>
+
+指令放的地方是，标签放属性值的地方
+
+<span v-text="msg" v-xxx v-xxx></span>
+
+## v-text
+
+模板语法`{{}}`跟`v-text`是一样的
+```html
+<!-- 渲染model的变量msg -->
+<span v-text="msg"></span>
+<!-- 渲染字符串name -->
+<p v-text="'name'"></p>
+<p 这家公司很坑别去了>{{name}}</p>
+<!-- 和下面的一样 -->
+<span>{{msg}}</span>
+```
+
+第一种写法写在属性值上面，不会影响页面的效果的，v-text不是html标签内置属性，v-xxx，建议用上面那种写法
+
+$(V).text(M);
+
+V<-(v-xxx)-M
+
+你放入v-text的时候等价于选择了节点，然后把数据给渲染到这个地方
+
+Vue只关注与视图，数据到位，视图就到位
+
+## v-html
+
+可以渲染html结构，相当于`$().html()`
+```js
+const vm = new Vue({
+    // V
+    el: '#demo',
+    // M
+    data: {
+        name: 'yao',
+        html: `<p>123<b style="color:red">456</b>789</p>`
+    },
+    // 模板
+    template: `
+        <div>
+            <p>{{name}}</p>
+            <p v-text="'name'"></p>
+            <div v-html="html"></div>
+        </div>
+    `
+})
+```
+
+# v-show
+
+相当于`$().show()`，它接受一个布尔值，如果为真就显示，本质是改变display的属性'block':'none'
+
+# v-if
+
+和v-show在界面层的表现很相似，为真的那就增加，为假删除
+
+`$().remove`和`$().append()`
+
+搞清楚v-if和v-show，页面的状态频繁切换的话，v-show，如果状态只有一次变化的话用v-if
+
+# v-else和v-else-if
+
+只可以配合v-if使用的
+
+
+# v-for
+
+循环遍历`$().each()`
+
+```html
+<ul>
+    <li v-for="item in arr" v-text="item.name"></li>
+</ul>
+```
+
+支持v-for多层嵌套，并且可以结合其他的指令使用，比如你可以配合v-if实现筛选
+
+```js
+<ul>
+    <li  v-for="item in arr" v-if="item.name==='jing'" >
+        <p v-text="item.name"></p>
+        <p v-for="s in item.skill" v-text="s"></p>
+    </li>
+</ul>
+```
+我们可以用(item,index)获取下标志，或者键对值
+```html
+<div v-for="(item, index) in items"></div>
+<div v-for="(val, key) in object"></div>
+<div v-for="(val, name, index) in object"></div>
+```
+加一个key有一个好处，等价于数据库，主键，防止出现重复渲染，让每一条都是对应唯一的一个key值
+```html
+<div v-for="item in items" :key="item.id">
+  {{ item.text }}
+</div>
+```
