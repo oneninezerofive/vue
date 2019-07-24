@@ -297,3 +297,86 @@ const vm = new Vue({
   {{ item.text }}
 </div>
 ```
+
+# v-on
+
+事件处理的指令，vue的事件绑定，处理事件都用这种方式去处理，`$().on()`，`addEventListener，xxx.onclick=()=>{}`
+
+```html
+<div onclick=""></div>
+<div v-on:click=""></div>
+<div v-on:xxxx=""></div>
+```
+
+要把需要监听的函数，放入methods选项里面
+```js
+new Vue({
+    // 放函数
+    methods: {}
+})
+```
+如果不带参数，那里面可以获取event对象
+
+下面两种写法是一样的
+
+```js
+@xxx === v-on:xxx
+```
+
+```html
+<button @click="test">test</button>
+<button v-on:click="test">test</button>
+<button v-on:click="test(1)">test(带参数)</button>
+<!-- 使用修饰符去防止冒泡或者阻止默认行为 -->
+<button @click.stop.prevent="doThis"></button>
+<button v-on="{ mousedown: doThis, mouseup: doThat }"></button>
+<button @mousedown="doThis" @mouseup="doThat"></button>
+```
+
+M-C->V，数据变，视图跟着变，单向数据流，单向绑定
+
+V-C->M
+
+MVVM模式，双向数据绑定模式
+
+MVC架构 Model View Control
+
+MV
+
+V
+
+## v-bind
+
+缩写
+```
+v-bind:xxx === :xxx
+```
+把标签的属性值转化为变量
+```html
+<img src="真真的地址">
+<img v-bind:src="变量">
+<img v-bind:src="imageSrc">
+
+<img src="https://avatars1.githubusercontent.com/u/17243165?s=460&v=4" />
+<img v-bind:src="url" v-bind:name="name" />
+```
+
+如果是class，style属性的时候可以支持数组或者对象
+
+```html
+<img v-bind:class="{}">
+<img v-bind:class="[]">
+```
+
+## v-model
+
+获取输入框的值
+```
+$().val()
+```
+可以用v-model把输入框的值获取到data的name里面，V->M->V，Vue里面除了事件以外可以V->M的唯一方法
+
+V->M只能借助两个指令 v-on和v-model实现
+```html
+<input v-model="name" />
+```
