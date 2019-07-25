@@ -28,28 +28,11 @@
     </div>
     <script src="../vue.js"></script>
     <script>
-        // 全局注册
-        Vue.component('my-footer', {
-            // 每个组件在经过使用的时候都返回一个全新的data数据模型
-            // M
-            data() {
-                return {
-                    name: 'yao'
-                }
-            },
-            // V
-            template: `
-                <div>
-                    底部组件
-                    <input v-model="name" />
-                </div>
-            `
-        })
         Vue.component('my-header', {
             template: `
                 <header>
-                    头部组件
-                    <my-footer></my-footer>
+                    头部组件 {{this.name}}
+                    <slot></slot>
                 </header>
             `
         })
@@ -60,11 +43,11 @@
             template: `
                 <div>
                     <!-- 组件其实也是自定义标签 -->
+                    <my-header>
+                        <p>123</p>
+                    </my-header>
                     <my-header></my-header>
                     <my-header></my-header>
-                    <my-header></my-header>
-                    <my-footer></my-footer>
-                    <my-footer></my-footer>
                 </div>
             `
         })

@@ -205,3 +205,204 @@ Vue.component('my-footer', {
 组件允许并列，嵌套，组件不但可以拥有兄弟关系，还可以拥有父子关系
 
 
+# JSX
+
+第一页，用户看到的那一页
+template
+```html
+<div :name="name">{{name}}</div>
+```
+
+第二页，模板，虚拟DOM
+render
+```js
+render(createElement) {
+    return createElement('div', {
+        attrs: {
+            name: this.name
+        }
+    }, this.name)
+},
+template:`
+    <div :name="name">{{name}}</div>
+`
+```
+用对象去描述真实的DOM结构
+```js
+{
+    tag: "div",
+    data: attrs: {name: "yao"},
+    children: [{
+        tag: undefined
+        text: "yao",
+        children: undefined
+    }]
+}
+```
+
+空间换时间
+
+```html
+<template name="component-name">
+    <div>
+        hello world
+        <p>123</p>
+        <ul>
+            <li>1</li>
+        </ul>
+        <p>123</p>
+    </div>
+</template>
+```
+用函数来描述整个html结构
+```js
+vdom = obj = h(
+    "div",
+    null,
+    "hello world",
+    h("p", null, "123"),
+    h("ul", null, h("li", null, this.name)),
+    h("p", null, "123")
+);
+```
+
+```js
+{
+    tag: "div",
+    data: attrs: {name: "yao"},
+    children: [{
+        tag: undefined
+        text: "yao",
+        children: undefined
+    }]
+}
+{
+    tag: "div",
+    data: attrs: {name: "jing"},
+    children: [{
+        tag: undefined
+        text: "yao",
+        children: undefined
+    }]
+}
+```
+对象和对象想比较
+
+vue.js完整就是既支持template写法，也支持render的写法
+
+vue.runtime.common.dev.js，只支持render的写法，你必须在开发的时候用template写，但是需要后端node和webpack帮你把template转化为render
+
+
+## 组件的全局注册和局部注册
+
+可以做组件的局部注册，组件内部可以放一个components选项，来注册组件的，局部组件，注册了谁才可以用谁
+
+<img src="4.png" />
+
+```js
+new Vue({
+    components: {
+        'my-footer': myFooter,
+        'my-header': {
+            components: {
+                'my-footer': myFooter,
+            },
+            template: `
+                <header>
+                    头部组件
+                    <my-footer></my-footer>
+                </header>
+            `
+        }
+    }
+})
+```
+
+## 通过 Prop 向子组件传递数据
+
+property属性
+
+通过标签的属性，让父组件传递数据给子组件
+
+类似继承的特性，子组件可以从父组件获取继承值
+
+如果你作为父组件，你下面有很多子组件的话，那么你可以props给它传递值，父亲可以把自己的遗产传承给他，也等价于可以发命令，儿子
+
+```js
+Vue.component('my-header', {
+    // 从标签的属性值上面获取父组件给我的值
+    props: ['abc'],
+    template: `
+        <header>
+            头部组件{{this.abc}}
+        </header>
+    `
+})
+
+// 根容器
+new Vue({
+    el: "#demo",
+    data: {
+        num: 1000
+    },
+    template: `
+        <div>
+            <my-header :abc="num"></my-header>
+            <my-header :abc="num"></my-header>
+            <my-header abc="999"></my-header>
+        </div>
+    `
+})
+```
+可以传不同的props来改变组件的状态，使同一个组件拥有不一样的状态，而决定权在父组件手上
+
+<img src="5.png">
+
+```html
+<my-header color="red" :title="title" :abc="num"></my-header>
+<my-header color="blue" title="支付宝" :abc="num"></my-header>
+<my-header color="yellow" title="百度" abc="999"></my-header>
+```
+
+## 自定义事件
+
+this.$emit和this.$on自定义事件方法，不属于原生的事件，是自己定义的事件
+
+```js
+var vm = new Vue();
+vm.$emit('toHeader', this.name);
+vm.$on('toHeader', (data) => {
+    console.log(data)
+    this.name = data
+});
+```
+
+## 插槽
+
+`<slot></slot>`的内置组件，可以把外部的标签内容带到这个地方显示，可以用props来解决类似问题的，slot插槽只支持带html结构进去组件内部
+
+```js
+Vue.component('my-header', {
+    template: `
+        <header>
+            头部组件 {{this.name}}
+            <slot></slot>
+        </header>
+    `
+})
+
+// 根容器
+new Vue({
+    el: "#demo",
+    template: `
+        <div>
+            <!-- 组件其实也是自定义标签 -->
+            <my-header>
+                <p>123</p>
+            </my-header>
+            <my-header></my-header>
+            <my-header></my-header>
+        </div>
+    `
+})
+```

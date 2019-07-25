@@ -28,28 +28,13 @@
     </div>
     <script src="../vue.js"></script>
     <script>
-        // 全局注册
-        Vue.component('my-footer', {
-            // 每个组件在经过使用的时候都返回一个全新的data数据模型
-            // M
-            data() {
-                return {
-                    name: 'yao'
-                }
-            },
-            // V
-            template: `
-                <div>
-                    底部组件
-                    <input v-model="name" />
-                </div>
-            `
-        })
         Vue.component('my-header', {
+            // 从标签的属性值上面获取父组件给我的值
+            props: ['abc', 'title', 'color', 'obj'],
             template: `
-                <header>
-                    头部组件
-                    <my-footer></my-footer>
+                <header :style="{
+                    backgroundColor: color
+                }" v-html="title">
                 </header>
             `
         })
@@ -57,16 +42,26 @@
         // 根容器
         new Vue({
             el: "#demo",
+            data: {
+                num: 1000,
+                title: '微信',
+                obj: {
+                    name: 'yao',
+                    skill: ['ps']
+                }
+            },
             template: `
                 <div>
-                    <!-- 组件其实也是自定义标签 -->
-                    <my-header></my-header>
-                    <my-header></my-header>
-                    <my-header></my-header>
-                    <my-footer></my-footer>
-                    <my-footer></my-footer>
+                    <my-header :obj="obj" color="red" :title="title" :abc="num"></my-header>
+                    <my-header color="blue" title="支付宝" :abc="num"></my-header>
+                    <my-header color="yellow" title="<p>百度</p>" abc="999"></my-header>
                 </div>
-            `
+            `,
+            methods: {
+                test() {
+                    console.log('点击了组件')
+                }
+            }
         })
     </script>
 </body>
