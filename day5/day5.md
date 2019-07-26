@@ -175,3 +175,232 @@ new Vue({
 <!-- 错误的写法 -->
 <p v-text="version|currency"></p>
 ```
+
+# Vue.use()
+
+如果引入第三方插件，轮播图，cookie，
+
+- vuex        仓库
+- vue-router  路由
+- vue-axios
+- vue-swiper
+- vue-scroll
+
+vue常用的插件，里面封装功能，常用的方法，封装进去
+
+先引入vue再引入插件，然后再使用`Vue.use(xxx)`注册该插件，激活插件
+```js
+var Vue = require('vue')
+var VueRouter = require('vue-router')
+// 不要忘了调用此方法
+Vue.use(VueRouter)
+```
+
+[官方收录的插件库awesome-vue](https://github.com/vuejs/awesome-vue#components--libraries)
+
+如果你希望去拓展Vue本身没有的功能，那么你可以使用一个对象，配合`Vue.use()`来创建插件，模块化和组件化高度体现，用于Vue构建生态
+
+```js
+// 定义一个对象
+var myPlugin = {
+    // 安装 必须得有
+    install(Vue, options) {
+        // new Vue选项
+        // 放Vue的属性上
+        Vue.plus = function (a, b) {
+            // 逻辑...
+            return a + b
+        }
+        // 放原型链上
+        Vue.prototype.$plus = function (a, b) {
+            // 逻辑...
+            return a + b
+        }
+        // 组件
+        Vue.component(options.name, {
+            template: `
+                <header>头部</header>
+            `
+        })
+    }
+}
+// 插件本质对象
+Vue.use(myPlugin, {
+    name: 'my-header'
+})
+var vm = new Vue({
+    el: "#demo",
+    data: {
+        version: Vue.version
+    },
+    template: `
+        <div>
+            <p v-text="version"></p>
+            <my-header></my-header>
+        </div>
+    `
+})
+```
+# Vue.mixin
+
+混入
+
+```js
+Vue.mixin({
+    // 选项
+    data() {
+        return {
+            name: 'yao'
+        }
+    },
+    // 这里面会监听
+    watch: {
+        name() {
+            console.log(this.name)
+        }
+    },
+    methods: {
+        test() {
+            console.log(1)
+        }
+    },
+})
+// new Vue本质是一个组件 容器 根组件
+var vm = new Vue({
+    el: "#demo",
+    data: {
+        version: Vue.version
+    },
+    template: `
+        <div>
+            <p v-text="name"></p>
+            <input v-model="name" />
+            <button @click="test">ok</button>
+        </div>
+    `,
+    methods: {
+        test() {
+            console.log(2)
+        }
+    },
+    watch: {
+        name() {
+            console.log(11111)
+        }
+    }
+})
+```
+
+# Vue.compile
+
+`Vue`支持把html结构转化为`JSX`，构造虚拟DOM对象的函数
+
+```js
+Vue.compile('<div><span>{{ msg }}</span></div>')
+```
+```
+对象=Vue.compile(字符串)
+```
+字符串做对比
+```html
+<div><span>123</span></div>
+<div><span>456</span></div>
+```
+对象对比比较好处理，Vue想办法把html模板转化为函数，函数接受(M)执行诞生一个对象，对象描述真实DOM结构，把对象渲染到真实DOM结构里面，空间Double，首次加载会比较慢，第二次就会加快会做镜像比较，然后差异化更新
+```js
+{
+    tag:'div',
+    children:[{
+        tag: 'span',
+        text: '123'
+    }]
+}
+
+{
+    tag:'div',
+    children:[{
+        tag: 'span',
+        text: '456'
+    }]
+}
+```
+
+# Vue.observable
+
+Vue.observable接受一个对象，里面存放着数据，这个state，你可以理解为一个仓库
+
+```js
+// 全局数据
+const state = Vue.observable({
+    count: 0
+})
+
+// 以前我们会把数据放入一个data或者computed里面 局部数据
+new Vue({
+    data:{}
+})
+```
+
+你可以配合计算属性把仓库的值导入到组件或者容器里面，它就可以实现组件跨代通信
+
+# 生命周期（重点）
+
+一个根容器，所有的组件都活在一个根容器里面
+```js
+new Vue({
+    tmeplate:`<myheader v-if="bool"></myheader>`
+})
+```
+这些组件除了诞生，还要消失，每个容器和组件都会经过一个生命周期(诞生->消亡)
+
+|生命周期||
+|-|-|
+|beforeCreate|创建前|
+|created|创建后|
+|||
+
+```js
+var vm = new Vue({
+    el: '#demo',
+    data: {
+        name: '生命周期'
+    },
+    // template: `
+    //     <div>{{name}}</div>
+    // `,
+    render(createElement) {
+        console.log('--------render--------')
+        var vnode = createElement('div', null, this.name)
+        console.log('vnode', vnode)
+        return vnode
+    },
+    // 钩子 容器诞生前 组件诞生前
+    // 诞生前，没数据没视图
+    beforeCreate() {
+        console.log('--------beforeCreate--------')
+        console.log('V', this.$el)
+        console.log('M', this.$data)
+    },
+    created() {
+        // 视图没有
+        // 数据就位了
+        console.log('--------created--------')
+        console.log('V', this.$el)
+        console.log('M', this.$data)
+    },
+    beforeMount() {
+        // 模板准备中，但是拿到挂载点
+        // 数据也准备
+        // 数据放进模板了，但是模板还没挂载到真实DOM
+        console.log('--------beforeMount--------')
+        console.log('V', this.$el)
+        console.log('M', this.$data)
+    },
+    mounted() {
+        console.log('--------mounted--------')
+        console.log('V', this.$el)
+        console.log('M', this.$data)
+    }
+})
+```
+

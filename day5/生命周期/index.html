@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="demo"></div>
+    <script src="../vue.js"></script>
+    <script>
+        var vm = new Vue({
+            el: '#demo',
+            data: {
+                name: '生命周期',
+                vnode: null
+            },
+            // template: `
+            //     <div>{{name}}</div>
+            // `,
+            render(createElement) {
+                console.log('--------render--------')
+                var vnode = createElement('div', null, this.name)
+                this.vnode = vnode
+                console.log('vnode', vnode)
+                // 直接操作虚拟DOM，虚拟DOM还没挂载到真实DOM
+                vnode.tag = 'p'
+                vnode.children[0].text = 'hi'
+                return vnode
+            },
+            // 钩子 容器诞生前 组件诞生前
+            // 诞生前，没数据没视图
+            beforeCreate() {
+                console.log('--------beforeCreate--------')
+                console.log('V', this.$el)
+                console.log('M', this.$data)
+            },
+            created() {
+                // 视图没有
+                // 数据就位了
+                console.log('--------created--------')
+                console.log('V', this.$el)
+                console.log('M', this.$data)
+            },
+            beforeMount() {
+                // 模板准备中，但是拿到挂载点
+                // 数据也准备
+                // 数据放进模板了，但是模板还没挂载到真实DOM
+                console.log('--------beforeMount--------')
+                console.log('V', this.$el)
+                console.log('M', this.$data)
+            },
+            mounted() {
+                console.log('--------mounted--------')
+                console.log('V', this.$el)
+                console.log('M', this.$data)
+            }
+        })
+    </script>
+</body>
+
+</html>
