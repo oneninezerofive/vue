@@ -110,7 +110,7 @@ changeValue() {
 }
 ```
 
-# Vue.directive( id, [definition] )
+# Vue.directive( id, [definition] ) 面试会问到的
 
 自定义指令，指令，一般不需要自己去定义指令，内置指令一般是足够我们的使用了
 
@@ -243,7 +243,7 @@ var vm = new Vue({
 ```
 # Vue.mixin
 
-混入
+混入，不建议应用上使用
 
 ```js
 Vue.mixin({
@@ -327,7 +327,7 @@ Vue.compile('<div><span>{{ msg }}</span></div>')
 
 # Vue.observable
 
-Vue.observable接受一个对象，里面存放着数据，这个state，你可以理解为一个仓库
+Vue.observable接受一个对象，里面存放着数据，这个state，你可以理解为一个仓库，2.6.0新增
 
 ```js
 // 全局数据
@@ -360,7 +360,7 @@ new Vue({
 |||
 
 ```js
-var vm = new Vue({
+var vm = new Vue({  
     el: '#demo',
     data: {
         name: '生命周期'
@@ -404,3 +404,144 @@ var vm = new Vue({
 })
 ```
 
+- 我们一般把ajax请求放到created内，那就是因为这个生命周期最早出现数据
+- 我们一般把DOM操作放mounted内，因为这个生命周期才具有完整真实DOM
+- 如果你要操作真实DOM，第一想办法用指令实现，你可以尝试用ref
+
+## keep-alive和component
+
+高级选项卡
+
+在 2.2.0 及其更高版本中
+
+以前我们使用组件都是`<cp1/>`或者`<cp1></cp1>`这样使用的，那现在还可以这样用`<component is="cp1"></component>`
+```js
+Vue.component('cp1', {
+    template: `
+        <p>组件1</p>
+    `
+})
+var vm = new Vue({
+    el: '#demo',
+    data: {
+        name: '生命周期',
+        vnode: null,
+        color: 'red'
+    },
+    template: `
+    <keep-alive>
+        <component is="cp1"></component>
+    </keep-alive>
+    `,
+})
+```
+你可以使用一个`<keep-alive>`包含任何组件，那就是可以把组件放进内存里面，在需要的时候才拿出来使用
+
+## activated和deactivated
+
+活跃和不活跃，缓存在内存里面，而非从虚拟DOM和真实DOM中消失
+```js
+Vue.component('cp1', {
+    template: `
+        <p>组件1</p>
+    `,
+    activated() {
+        console.log('activated1')
+    },
+    deactivated() {
+        console.log('deactivated1')
+    }
+})
+```
+
+## beforeDestroy和destroyed
+
+销毁前和销毁后，从DOM上完全给删掉，虚拟DOM和真实DOM，完全从虚拟和真实DOM删除
+
+- 一般由v-if触发
+- 路由触发`<router-view></router-view>`
+
+
+destroyed是完全删掉
+
+比如你定义了一个全局的变量，是这个组件诞生的时候带来的，就需要在它销毁的时候带走，这样才不会对其他造成干扰
+```js
+Vue.component('cp1', {
+    data() {
+        return {
+            timer: null
+        }
+    },
+    template: `
+        <div>组件</div>
+    `,
+    created() {
+        this.timer = window.setInterval(() => {
+            console.log(1)
+        }, 1000)
+    },
+    beforeDestroy() {
+        console.log('beforeDestroy')
+    },
+    destroyed() {
+        console.log('destroyed')
+        clearInterval(this.timer)
+    }
+})
+```
+
+# errorCaptured
+
+你可以把它放在父组件中监听子组件的错误，你可以错误做逻辑
+```js
+Vue.component('cp1', {
+    data() {
+        return {
+            timer: null
+        }
+    },
+    template: `
+        <div>组件</div>
+    `,
+    mounted() {
+        // 错误
+        this.abc = p
+    }
+})
+var vm = new Vue({
+    el: '#demo',
+    data: {
+        bool: true
+    },
+    template: `
+        <div>
+            <cp1 v-if="bool"></cp1>
+            <button @click="bool=!bool">增加或者删除</button>
+        </div>
+    `,
+    errorCaptured(err, vm, info) {
+        // 子组件出现错误，捕捉成功
+        console.log(err, vm, info)
+    }
+})
+```
+
+
+# ref
+
+它帮你在虚拟DOM寻找你要更改的那个节点，先更改虚拟DOM，再自动更新真实DOM
+
+```html
+<div ref="pp">{{name}}</div>
+```
+
+以前是这样拿的，用选择直接选真实DOM更改
+```js
+var p = document.querySelector('p')
+p.style.color = 'red'
+```
+但是你多了一层虚拟DOM，那需要先改虚拟DOM再动真实DOM
+```js
+var p = this.$refs.pp
+p.style.color = 'red'
+```
