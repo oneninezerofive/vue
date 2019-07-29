@@ -59,8 +59,6 @@ console.log(vm)
 ```
 由于你改写了上面的那份文件，是非JS后缀的Vue文件，所以需要一个加载器在webpack做处理，那个加载器就是vue-loader
 
-
-
 # Vue Loader 是什么？
 
 Vue Loader 是一个 webpack 的 loader，它允许你以一种名为单文件组件 (SFCs)的格式撰写 Vue 组件：
@@ -162,3 +160,118 @@ export default {
   }
 };
 ```
+
+# 组件化在webpack的尝试
+
+- dist 出口 发布
+- src 入口 开发
+  - components 单文件组件 xxx.vue
+  - app.vue 所有组件的父组件
+  - index.css 全局样式
+  - index.js 整个项目入口逻辑
+  - package.json
+  - webpack.config.js
+
+只有一个`<template>`，有没有其他`<style><script>`这些都没关系，后面这些都可以有多个
+```html
+<template>
+  <header v-text="title"></header>
+</template>
+```
+必须局部注册
+```js
+import xheader from "./components/xheader.vue";
+import xsearch from "./components/xsearch.vue";
+export default {
+  components: {
+    xheader,
+    xsearch
+  }
+};
+```
+全局注册
+```js
+import Vue from 'Vue'
+import xheader from "./components/xheader.vue";
+import xsearch from "./components/xsearch.vue";
+Vue.components('xheader',xheader);
+```
+
+# Vue CLI
+
+Command Line Interface命令界面
+
+Vue脚手架工具，集大成者的环境，webpack，vue-loader全部给你配置好
+
+- [Vue CLI](https://cli.vuejs.org/zh/)
+
+安装脚手架环境，全局安装会诞生一个vue的命令
+```bash
+npm install -g @vue/cli
+cnpm install -g @vue/cli
+# OR
+yarn global add @vue/cli
+```
+
+创建一个项目： UI界面，非常适合新手
+```bash
+vue create my-project
+# OR
+vue ui
+```
+
+执行`vue ui`，它会自动在浏览器里面自动打开一个界面，你可以在这里创建你的Vue项目
+
+<img src="1.png"/>
+
+- ESLint 代码风格检测
+- babel 支持ES6
+
+插件：vue-router，vuex，利用`vue.use()`第三方开发者帮你写好的vue补丁，就是额外vue没有的功能
+
+依赖：以前你都需要在npm上安装依赖，那现在使用可视化界面帮你安装
+
+```bash
+npm install xxx
+```
+等价于在你的项目package.json目录下，用命令安装
+```json
+// 运行依赖
+"dependencies": {
+  "core-js": "^2.6.5",
+  "vue": "^2.6.10",
+  "weui": "^2.0.1"
+},
+// 开发依赖
+"devDependencies": {
+  "@vue/cli-plugin-babel": "^3.9.0",
+  "@vue/cli-plugin-eslint": "^3.9.0",
+  "@vue/cli-service": "^3.9.0",
+  "babel-eslint": "^10.0.1",
+  "eslint": "^5.16.0",
+  "eslint-plugin-vue": "^5.0.0",
+  "vue-template-compiler": "^2.6.10"
+},
+```
+<img src="2.png">
+
+```js
+Vue.component('xxx',{
+  template,
+  render()
+})
+```
+
+## 代码目录
+
+前端自动构建化，webpack实现自动化，模块化，组件化
+
+- dist 出口文件夹 发布的文件夹，丢给后端，让它发布到服务器
+- public 就是你要发布的公有资源，比如你的首页，将会根据里面index.html生成
+- src 入口文件夹
+  - assets 静态文件夹 存放图片 样式 音频 视频
+  - components xxx.vue存放单文件组件
+  - App.vue 所有的组件父组件
+  - main.js 入口文件
+
+
