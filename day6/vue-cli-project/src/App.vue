@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <Header />
+    <Header color="blue" status="2">
+      <div>百度</div>
+    </Header>
     <Search />
     <Panel />
     <Tabbar />

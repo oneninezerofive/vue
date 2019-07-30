@@ -49,7 +49,7 @@ export default {
   },
   // 自定义指令
   directives: {
-    focus(el, binding) {
+    focus(el) {
       // 自动聚焦输入框
       el.focus();
     }
