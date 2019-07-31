@@ -23,10 +23,22 @@ import {
     Tabbar,
     TabbarItem
 } from 'vant';
+// 输入框组建
+import {
+    Field
+} from 'vant';
+// 单元格
+// import {
+//     Cell,
+//     CellGroup
+// } from 'vant';
+
 export default () => {
     Vue.use(Search);
     Vue.use(Grid).use(GridItem);
     Vue.use(Divider);
     Vue.use(DropdownMenu).use(DropdownItem);
     Vue.use(Tabbar).use(TabbarItem);
+    Vue.use(Field);
+    // Vue.use(Cell).use(CellGroup);
 }

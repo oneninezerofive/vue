@@ -224,3 +224,137 @@ methods: {
   }
 }
 ```
+
+# 重定向和别名
+
+重定向也是通过 routes 配置来完成，下面例子是从 `/a` 重定向到 `/b`：
+
+如果你重新加载你的页面的时候，它默认帮你跳转的那个路由
+
+如果路由匹配到/，自动跳转到/tabbar/home
+```js
+// 重定向
+{
+    path: '/',
+    redirect: '/tabbar/home'
+}
+```
+支持你放对象
+
+```js
+{
+  path: '/',
+  redirect: {
+      name: 'detail',
+      params: {
+          id: 1,
+          name: 'yao'
+      }
+  }
+}
+```
+我们可以让 / 路由拥有第二个名字 /index.html
+
+```js
+// 重定向
+{
+    path: '/',
+    // 别名
+    alias: '/index.html',
+    redirect: () => {
+        // 我要跳进/123获取路由的一些详情信息
+        // console.log(to)
+        // 方法接收 目标路由 作为参数
+        // return 重定向的 字符串路径/路径对象
+        return '/tabbar/home'
+    }
+}
+```
+```bash
+# 下面三者等价
+http://localhost:8080/#/index.html
+http://localhost:8080/#/
+http://localhost:8080/#/tabbar/home
+```
+
+
+# HTML5 History 模式
+
+vue-router 默认 hash 模式 —— 使用 URL 的 hash 来模拟一个完整的 URL，于是当 URL 改变时，页面不会重新加载。
+
+hash模式有个特征，就是url有个非常丑的 # 号
+```bash
+http://localhost:8080/#/index.html
+```
+```js
+const router = new VueRouter({
+  mode: 'history',
+  routes: [...]
+})
+```
+
+history比hash模式好看
+
+必须后端支持，没后端，没服务器你就不能这种模式
+
+如果你把#去掉，要考虑，兼容性，还有是否跟后端路由冲突
+
+# 导航守卫
+
+进入路由之前，会有个门卫作为保护
+
+```js
+const router = new VueRouter({
+    // 你默认是哈希模式，改为H5 history模式
+    mode: 'history',
+    routes // (缩写) 相当于 routes: routes
+})
+
+// 全局前置守卫
+
+// 要进入路由，都要先通过这个守卫
+
+router.beforeEach((to, from, next) => {
+    // ...
+})
+```
+
+- to: Route: 即将要进入的目标 路由对象
+- from: Route: 当前导航正要离开的路由
+- next: Function: 一定要调用该方法来 resolve 这个钩子。
+
+如果首位没有调用next方法，那就是永远都不能进路由里面
+```js
+router.beforeEach(async (to, from, next) => {
+    const data = await axios.post('https://www.easy-mock.com/mock/5d3fe0fc738f621651cd1f4a/list/login', {
+        params: {
+            // 存在cookie里面
+            // 用token代替你的用户名和密码
+            token: 'ahsdioasydhkaujhdaskj'
+        }
+    })
+    let isLogin = data.data.data.status
+    // 如果你没登陆你就进sign
+    // 如果你登陆 next
+
+    // 如果你登陆了你就next
+    // 或者你就要去登陆页，你也可以next
+
+    // 如果你是首页，详情页，登录页或者你登陆了，都可以进去，否则不给你进去
+    if (isLogin || to.path === '/sign' || to.path === '/tabbar/home' || to.name === 'detail') {
+        next()
+    } else {
+        // 编程式导航
+        router.push({
+            name: 'sign'
+        })
+    }
+
+})
+```
+进路由之后才触发的
+```js
+router.afterEach((to, from) => {
+  // ...
+})
+```

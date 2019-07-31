@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+    <transition name="bounce">
+      <router-view></router-view>
+    </transition>
     <!-- 标签栏 -->
     <van-tabbar :route="true" v-model="active">
       <!-- 声明式导航 :url="t.url" -->
@@ -51,3 +53,46 @@ export default {
   }
 };
 </script>
+<style>
+.bounce-enter-active {
+  display: block;
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  display: none;
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  6.5% {
+    -webkit-transform: translateX(-6px) rotateY(-9deg);
+    transform: translateX(-6px) rotateY(-9deg);
+  }
+
+  18.5% {
+    -webkit-transform: translateX(5px) rotateY(7deg);
+    transform: translateX(5px) rotateY(7deg);
+  }
+
+  31.5% {
+    -webkit-transform: translateX(-3px) rotateY(-5deg);
+    transform: translateX(-3px) rotateY(-5deg);
+  }
+
+  43.5% {
+    -webkit-transform: translateX(2px) rotateY(3deg);
+    transform: translateX(2px) rotateY(3deg);
+  }
+
+  50% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    
+  }
+}
+</style>
