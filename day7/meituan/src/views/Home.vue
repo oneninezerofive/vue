@@ -16,6 +16,7 @@
     <van-grid>
       <van-grid-item
         v-for="(k,index) in kingkongListComputed"
+        :to="`/detail/${index}/yao`"
         :key="index"
         :icon="k.icon"
         :text="k.name"
