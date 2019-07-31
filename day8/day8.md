@@ -151,3 +151,76 @@ this.$route.xxx
 ```
 
 动态路由传参其实是一个特殊的Get请求传参，也是组件通信的一种特殊方式
+
+# 嵌套路由
+
+一个主舞台，`<router-view>`嵌套`<router-view>`
+<img src="2.png"/>
+```html
+<router-view></router-view>
+```
+在配置项里面写多一个children，里面存放的数组，跟routes数组是相似的，而里面的path注意是没有/
+
+
+```bash
+# 如果你现在要进入Home组件的话
+http://localhost:8000/#/tabbar/home
+# 如果你现在要进入Order组件的话
+http://localhost:8000/#/tabbar/order
+```
+tabbar所在的主舞台是第一层router-view，tabbar在进场的时候router-view，提供给home组件展示
+```js
+const routes = [{
+        path: '/tabbar',
+        component: Tabbar,
+        // 嵌套路由，先进底部选项卡，再去找首页
+        children: [{
+            // 第二层路由的path是没有/
+            path: 'home',
+            component: Home,
+        }, {
+            path: 'order',
+            component: Order,
+        }, {
+            path: 'mine',
+            component: Mine,
+        }]
+    },
+    {
+        path: '/detail/:id/:name',
+        component: Detail
+    }
+]
+```
+
+# 编程式的导航
+
+如果你所在是home.html列表页，你可以使用一个a标签做跳转
+```html
+<a href="./detail.html">
+```
+JS跳转
+```js
+window.href = 'xxx
+window.history = 'xxx'
+```
+如果你利用JS的方法实现跳转，那就称之为**编程式导航**，本质上都是对`window.history`方法的封装
+
+|声明式|编程式|
+|-|-|
+|`<router-link :to="...">`|`router.push(...)`|
+|HTML|JS|
+
+通过`this.$router.xxx`的方法实现跳转，来代替`<router-link :to="...">`
+```js
+methods: {
+  onSearch() {},
+  // 编程式导航
+  navTo(id) {
+    this.$router.push({
+      name: "detail",
+      params: { id, name: "lin" }
+    });
+  }
+}
+```

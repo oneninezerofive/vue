@@ -1,4 +1,4 @@
-<template>
+<template name="component-name">
   <div>
     <!-- 搜索框 -->
     <van-search
@@ -13,10 +13,11 @@
       <div slot="action" @click="onSearch">搜索</div>
     </van-search>
     <!-- 宫格 -->
+    <!-- 声明式导航 :to="`/detail/${index}/yao`" -->
     <van-grid>
       <van-grid-item
         v-for="(k,index) in kingkongListComputed"
-        :to="`/detail/${index}/yao`"
+        @click="navTo(index)"
         :key="index"
         :icon="k.icon"
         :text="k.name"
@@ -41,11 +42,20 @@ export default {
       kingkongList: [],
       //   下拉菜单
       value1: 0,
-      menu: []
+      menu: [],
+      // 标签栏
+      active: 0
     };
   },
   methods: {
-    onSearch() {}
+    onSearch() {},
+    // 编程式导航
+    navTo(id) {
+      this.$router.push({
+        name: "detail",
+        params: { id, name: "lin" }
+      });
+    }
   },
   computed: {
     kingkongListComputed() {
@@ -81,4 +91,3 @@ export default {
   }
 };
 </script>
-

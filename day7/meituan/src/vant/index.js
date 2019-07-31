@@ -18,9 +18,15 @@ import {
     DropdownMenu,
     DropdownItem
 } from 'vant';
+// 标签栏
+import {
+    Tabbar,
+    TabbarItem
+} from 'vant';
 export default () => {
     Vue.use(Search);
     Vue.use(Grid).use(GridItem);
     Vue.use(Divider);
     Vue.use(DropdownMenu).use(DropdownItem);
+    Vue.use(Tabbar).use(TabbarItem);
 }

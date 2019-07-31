@@ -3,29 +3,8 @@ import Vue from 'vue'
 import App from './App.vue'
 // 全局引入
 import axios from 'axios'
-
-// 全局引入vuetouter
-import VueRouter from 'vue-router'
-// 安装路由
-Vue.use(VueRouter)
-
-// 定义路由组件
-import Home from './views/Home'
-import Detail from './views/Detail'
-
-const routes = [{
-    path: '/home',
-    component: Home
-  },
-  {
-    path: '/detail/:id/:name',
-    component: Detail
-  }
-]
-
-const router = new VueRouter({
-  routes // (缩写) 相当于 routes: routes
-})
+// 引入路由模块
+import router from './router'
 
 // Vue继承axios
 Vue.prototype.$axios = axios
