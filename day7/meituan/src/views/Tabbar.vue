@@ -1,8 +1,11 @@
 <template>
   <div>
-    <transition name="bounce">
+    <!-- <transition name="bounce"> -->
+    <!-- 把路由组件缓存到内存里面 -->
+    <keep-alive>
       <router-view></router-view>
-    </transition>
+    </keep-alive>
+    <!-- </transition> -->
     <!-- 标签栏 -->
     <van-tabbar :route="true" v-model="active">
       <!-- 声明式导航 :url="t.url" -->
@@ -64,7 +67,6 @@ export default {
 }
 @keyframes bounce-in {
   0% {
-    
     -webkit-transform: translateX(0);
     transform: translateX(0);
   }
@@ -92,7 +94,6 @@ export default {
   50% {
     -webkit-transform: translateX(0);
     transform: translateX(0);
-    
   }
 }
 </style>

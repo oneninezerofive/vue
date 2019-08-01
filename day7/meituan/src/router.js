@@ -6,12 +6,17 @@ Vue.use(VueRouter)
 
 // 定义路由组件
 import Tabbar from './views/Tabbar'
-import Detail from './views/Detail'
+// 懒加载路由
+const Detail = () => import('./views/Detail')
+
 
 // 嵌套组件
-import Home from './views/Tabbar/Home'
-// 订单页
-import Order from './views/Tabbar/Order'
+// import Home from './views/Tabbar/Home'
+const Home = () => import('./views/Tabbar/Home')
+// 订单页 懒加载
+const Order = () => import('./views/Tabbar/Order')
+// 同步加载
+// import Order from './views/Tabbar/Order'
 // 我的
 import Mine from './views/Tabbar/Mine'
 // 登陆注册

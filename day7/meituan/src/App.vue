@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <!-- <Home /> -->
-    <transition name="bounce">
-      <router-view></router-view>
-    </transition>
+    <!-- <transition name="bounce"> -->
+
+    <router-view></router-view>
+    <!-- </transition> -->
   </div>
 </template>
 
