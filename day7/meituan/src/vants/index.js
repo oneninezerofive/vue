@@ -21,7 +21,15 @@ import {
     Cell,
     CellGroup,
     // 商品卡片
-    Card
+    Card,
+    // 省市区选择
+    Area,
+    // 弹出层
+    Popup,
+    // 轻提示
+    Toast,
+    // 图片预览
+    ImagePreview
 } from 'vant';
 
 export default () => {
@@ -34,4 +42,8 @@ export default () => {
     Vue.use(List);
     Vue.use(Cell).use(CellGroup);
     Vue.use(Card);
+    Vue.use(Area);
+    Vue.use(Popup);
+    Vue.use(Toast);
+    Vue.use(ImagePreview);
 }
